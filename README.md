@@ -20,7 +20,7 @@
 
 1. リポジトリをクローン
 ```bash
-git clone [repository-url]
+git clone https://github.com/yo4raw/family_ai_bot
 cd family_ai_bot
 ```
 
@@ -29,27 +29,37 @@ cd family_ai_bot
 go mod download
 ```
 
-3. ローカル開発時の環境変数設定
+## 環境変数の設定
+
+### ローカル開発時
+以下の環境変数を設定してください：
+
 ```bash
 # Windows PowerShell
 $env:PORT = "8080"
 $env:OPENROUTER_API_KEY = "your_openrouter_api_key_here"
 $env:LINE_CHANNEL_SECRET = "your_line_channel_secret_here"
 $env:LINE_CHANNEL_TOKEN = "your_line_channel_token_here"
-$env:APP_URL = "your_app_url_here"
+$env:APP_URL = "http://localhost:8080"  # ローカル開発時
 
 # Linux/Mac
 export PORT=8080
 export OPENROUTER_API_KEY=your_openrouter_api_key_here
 export LINE_CHANNEL_SECRET=your_line_channel_secret_here
 export LINE_CHANNEL_TOKEN=your_line_channel_token_here
-export APP_URL=your_app_url_here
+export APP_URL=http://localhost:8080  # ローカル開発時
 ```
 
-4. サーバーの起動
-```bash
-go run main.go
-```
+### Render環境
+Renderダッシュボードで以下の環境変数を設定してください：
+
+| 環境変数 | 説明 | 設定値 |
+|----------|------|--------|
+| `OPENROUTER_API_KEY` | OpenRouter APIキー | OpenRouterで取得したAPIキー |
+| `LINE_CHANNEL_SECRET` | LINEチャネルシークレット | LINE Developersコンソールで取得 |
+| `LINE_CHANNEL_TOKEN` | LINEチャネルアクセストークン | LINE Developersコンソールで取得 |
+| `APP_URL` | アプリケーションのURL | Renderが自動的に設定 |
+| `PORT` | サーバーのポート番号 | Renderが自動的に設定 |
 
 ## LINE Messaging APIの設定
 
@@ -63,14 +73,10 @@ go run main.go
 
 1. Renderでアカウントを作成し、新しいWebサービスを作成
 2. GitHubリポジトリと連携
-3. Renderダッシュボードで環境変数を設定:
-   - `OPENROUTER_API_KEY`: OpenRouterのAPIキー
-   - `LINE_CHANNEL_SECRET`: LINEチャネルシークレット
-   - `LINE_CHANNEL_TOKEN`: LINEチャネルアクセストークン
-   - `APP_URL`: RenderのアプリケーションURL（自動的に設定されます）
-   - `PORT`: Renderが自動的に設定します
+3. 上記の環境変数をRenderダッシュボードで設定
 4. デプロイを実行
 5. デプロイ完了後、LINE DevelopersコンソールでWebhook URLを更新
+   - Webhook URL: `https://[あなたのアプリ名].onrender.com/callback`
 
 ## 開発者向け情報
 
@@ -83,4 +89,4 @@ go run main.go
 - 環境変数はRenderのダッシュボードで適切に設定してください
 - LINE Messaging APIの利用制限に注意してください
 - OpenRouter APIの利用制限とレート制限に注意してください
-- Webhook URLはHTTPS必須です 
+- Webhook URLはHTTPS必須です（Renderは自動的にHTTPSを提供します） 
