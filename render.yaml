@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: family-ai-bot
+    env: go
+    buildCommand: go build -o main
+    startCommand: ./main
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: PORT
+        value: 8080 
