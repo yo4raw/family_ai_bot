@@ -50,7 +50,9 @@ type OpenRouterResponse struct {
 }
 
 // 🌈 OpenRouter APIを呼び出してAIとお話しする関数だよ！
-// メッセージを送って、AIからの返信を受け取るよ！
+// callOpenRouterAPI は、指定されたユーザーメッセージを OpenRouter API に送信し、AI からの返信を取得する関数です。
+// 環境変数から API キーを取得し、ユーザーメッセージを含む JSON リクエストを作成して HTTP POST リクエストを実行します。
+// API キーが未設定の場合や、HTTP リクエスト、レスポンスの読み込み、JSON のパースに失敗した場合、または期待する応答が得られない場合はエラーを返します。
 func callOpenRouterAPI(message string) (string, error) {
 	// 🔑 APIキーを環境変数から取得するよ！
 	apiKey := os.Getenv("OPENROUTER_API_KEY")
@@ -125,7 +127,8 @@ func callOpenRouterAPI(message string) (string, error) {
 }
 
 // 💬 チャットリクエストを処理する関数だよ！
-// ユーザーからのメッセージを受け取って、AIからの返信を返すよ！
+// handleChat は、HTTP リクエストから JSON 形式のチャットリクエストを解析し、ユーザーのメッセージを抽出して OpenRouter API を呼び出し、取得した AI の応答を JSON 形式で返す HTTP ハンドラです。  
+// リクエストのデコードや AI API への問い合わせでエラーが発生した場合は、適切な HTTP ステータスコードとエラーメッセージをクライアントに返します。
 func handleChat(w http.ResponseWriter, r *http.Request) {
 	// 📥 リクエストの内容を読み取るよ！
 	var req ChatRequest
@@ -152,7 +155,11 @@ func handleChat(w http.ResponseWriter, r *http.Request) {
 }
 
 // 📱 LINEのWebhookを処理する関数だよ！
-// LINEから送られてきたメッセージを受け取って、AIからの返信を送るよ！
+// handleLineWebhook は、LINE の webhook リクエストを処理する HTTP ハンドラを返します。
+// このハンドラは、リクエストから送信されたイベントを解析し、テキストメッセージイベントに対しては
+// メッセージ内容を入力として callOpenRouterAPI を呼び出し、取得した AI の応答を LINE に返信します。
+// 署名が無効な場合は HTTP 400、その他のパースエラーの場合は HTTP 500 を返します。
+// また、API 呼び出しや返信送信時に発生したエラーはログに記録され、他のイベントの処理は継続されます。
 func handleLineWebhook(bot *linebot.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// 🔍 LINEからのリクエストを解析するよ！
@@ -189,7 +196,10 @@ func handleLineWebhook(bot *linebot.Client) http.HandlerFunc {
 }
 
 // 🚀 メイン関数だよ！
-// プログラムのスタート地点！
+// main はアプリケーションのエントリーポイントです。  
+// この関数は、環境変数から LINE の認証情報を取得し、LINE Bot クライアントを初期化します。  
+// その後、Gorilla Mux ルーターを用いて "/callback" エンドポイントに Webhook ハンドラを設定し、  
+// 指定された（またはデフォルトの）ポートで HTTP サーバーを起動します。
 func main() {
 	// 🔑 LINE Botの設定を読み込むよ！
 	channelSecret := os.Getenv("LINE_CHANNEL_SECRET")
